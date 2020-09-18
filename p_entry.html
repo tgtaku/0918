@@ -1,0 +1,182 @@
+<?php
+session_start();
+?>
+
+<?php
+if(isset($_POST['next'])){
+    //require "conn.php";
+    $project_name = $_POST["project_name"];
+    $address = $_POST["address"];
+    $overview = $_POST["overview"];
+    require "conn.php";
+
+$sql = "INSERT INTO projects_information_1 VALUES ('', '$project_name', '$address', '$overview', '' );";
+$result  = mysqli_query($conn, $sql);
+if($result){
+echo "Data Inserted";
+header('Location: http://10.20.170.52/web/p_entry_report_place.php');
+exit;
+}
+else{
+echo "Failed";
+}
+
+}
+
+?>
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>-->
+        <title>現場登録画面</title>
+        <link rel="stylesheet" href = "style.css">
+    </head>
+    <body>
+
+    <!--<h1>現場管理アプリ</h1>-->
+    <h2>現場情報を入力してください。</h2>
+
+        <form action="p_entry.php" method = "post" enctype="multipart/form-data">
+            
+            現場名<input type = "text" name = "project_name" value = ""><br />
+            所在地<input type ="text" name="address" value = ""><br />
+            概要<input type = "text" name="overview" value = ""><br />
+
+            
+            <h2>図面情報を登録してください。</h2>
+            
+        
+                
+<!-- <input type="button" value="行追加" onclick="insertTable('pdf_information', 'file_array')" /> -->
+			<label for="image_file">ファイルを選択してください</label><br>
+            <input type="file" name="image_file[]" id="image_file" multiple="multiple" onchange=checkFile()><br>
+            <!--<input type="text" id="selectfile" name="selectFile" value="" size="100" disabled>-->
+        
+            <table id = "pdf_information">
+                <tr>
+                    <th style="WIDTH: 15px" id="no">No</th>
+                    <th style="WIDTH: 150px" id=>ファイル名</th>
+                    <th style="WIDTH: 30px"></th>
+                </tr>
+            </table>
+            
+            <input type="submit" name ="next" value = "次へ">
+        </form>
+       
+    <script>
+
+        function checkFile(){
+            //var file_name = "";
+            //var test = e.target.files;
+            // フォームデータを取得
+            //var formdata = new FormData(document.getElementById("my_form"));
+            var sample = document.getElementById('image_file');
+            var formdata = new FormData(sample);
+
+            // XMLHttpRequestによるアップロード処理
+            var xhttpreq = new XMLHttpRequest();
+            xhttpreq.onreadystatechange = function() {
+                if (xhttpreq.readyState == 4 && xhttpreq.status == 200) {
+                    alert(xhttpreq.responseText);
+                }
+            };
+            xhttpreq.open("POST", "upload_file.php", true);
+            xhttpreq.send(formdata);
+
+            var p=[];
+            var n=[];
+            var f=[];
+            var file_name = document.getElementById("image_file");
+            var list ="";
+            for(var i=0; i<file_name.files.length; i++){
+                p.push(file_name.files[i].path);
+                n.push(file_name.files[i].name);
+                f.push(file_name.files[i]);
+            }
+            //テーブル取得
+            var table = document.getElementById("pdf_information");
+            //var num = file.length;
+            var num = p.length;
+            var cell1 = [];
+            var cell2 = [];
+            var cell3 = [];
+            for(var i = 0; i < num; i++){
+                //行を行末に追加
+            var row = table.insertRow(-1);
+            //セルの挿入
+            cell1.push(row.insertCell(-1));
+            cell2.push(row.insertCell(-1));
+            cell3.push(row.insertCell(-1));
+            
+            //削除ボタン
+            var button = '<input type = "button" value = "削除" onClick= "deleteRow(this)" />';
+            //行数取得
+            var row_len = table.rows.length;
+            //セルの内容入力
+            cell1[i].innerHTML = row_len -1;
+            cell2[i].innerHTML = n[i];
+            cell3[i].innerHTML = button;
+        }
+    }
+
+        function insertTable(id, file_array){
+            var file = ["file1", "file2", "file3"];
+            //var file = file_array;
+            //テーブル取得
+            var table = document.getElementById(id);
+            var num = file.length;
+            for(var i = 0; i < num; i++){
+                //行を行末に追加
+            var row = table.insertRow(-1);
+            //セルの挿入
+            var cell1 = row.insertCell(-1);
+            var cell2 = row.insertCell(-1);
+            var cell3 = row.insertCell(-1);
+            //削除ボタン
+            var button = '<input type = "button" value = "削除" onClick= "deleteRow(this)" />';
+            //行数取得
+            var row_len = table.rows.length;
+            //セルの内容入力
+            cell1.innerHTML = row_len -1;
+            cell2.innerHTML = file[i];
+            cell3.innerHTML = button;
+
+            }
+
+        }
+
+        function deleteRow(obj) {
+            // 削除ボタンを押下された行を取得
+            tr = obj.parentNode.parentNode;
+            file_name = tr.cells[1].innerHTML;
+            console.log(tr.cells[1].innerHTML);
+            //tr.cells[1]
+            // フォームデータを取得
+            //var formdata = new FormData(document.getElementById("my_form"));
+            var formdata = new FormData();
+            formdata.append('deleteFile',file_name);
+            // XMLHttpRequestによるアップロード処理
+            var xhttpreq = new XMLHttpRequest();
+            xhttpreq.onreadystatechange = function() {
+                if (xhttpreq.readyState == 4 && xhttpreq.status == 200) {
+                    alert(xhttpreq.responseText);
+                }
+            };
+            xhttpreq.open("POST", "delete.php", true);
+            xhttpreq.send(formdata);
+                
+                // trのインデックスを取得して行を削除する
+                tr.parentNode.deleteRow(tr.sectionRowIndex);
+                var tableTarget = document.getElementById('pdf_information');
+                for(var i = 1; i < tableTarget.rows.length; i++){
+                    tableTarget.rows[i].cells[0].innerHTML = i;
+                }
+            }
+
+            
+    </script>
+    </body>
+</html>
