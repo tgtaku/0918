@@ -1,0 +1,88 @@
+function setPDF(){
+            //テーブル取得
+            var table = document.getElementById("pdf_information");
+            var pdf_name;
+            var fd;
+            var xhttpreq;
+            for(var i = 1; i<table.rows.length; i++){
+            pdf_name = table.rows[i].cells[1].innerHTML;
+            // フォームデータを取得
+            fd = new FormData();
+            fd.append('pdf',pdf_name);
+            // XMLHttpRequestによるアップロード処理
+            xhttpreq = new XMLHttpRequest();
+            xhttpreq.onreadystatechange = function() {
+                if (xhttpreq.readyState == 4 && xhttpreq.status == 200) {
+                    alert(xhttpreq.responseText);
+                }
+            };
+            xhttpreq.open("POST", "insert_pdf_information.php", true);
+            xhttpreq.send(fd);
+            }
+            }
+            
+            
+            
+            
+              onclick=setPDF()
+              
+              
+              
+              
+              
+              /*if(is_uploaded_file($_FILES["image_file"])){
+
+
+    $uploaddir = "./up/";
+    $uploadfile = $uploaddir . basename($_FILES['image_file']['name'][0]);
+    
+    echo '<pre>';
+    if (move_uploaded_file($_FILES['image_file']['tmp_name'][0], $uploadfile)) {
+        echo "File is valid, and was successfully uploaded.\n";
+    } else {
+        echo "Possible file upload attack!\n";
+        print_r($uploadfile);
+    }
+    
+    echo 'Here is some more debugging info:';
+    print_r($_FILES);
+    
+    print "</pre>";
+}
+*/
+
+/*$path = './up/';
+
+// ファイルがアップロードされているかと、POST通信でアップロードされたかを確認
+if( !empty($_FILES['image_file[]']['tmp_name']) && is_uploaded_file($_FILES['image_file[]']['tmp_name']) ) {
+	// ファイルを指定したパスへ保存する
+	if( move_uploaded_file( $_FILES['image_file[]']['tmp_name'], $path.'upload_pic.jpg') ) {
+		echo 'アップロードされたファイルを保存しました。';
+	} else {
+		echo 'アップロードされたファイルの保存に失敗しました。';
+    }
+}else{
+
+    }*/
+/*if(isset($_FILES["image_file"])){
+    $_SESSION['data1']=1;
+    print_r($_SESSION['data1']);
+    //print_r($_SESSION['upFile']);
+
+    $uploaddir = "./up/";
+    $uploadfile = $uploaddir . basename($_FILES['image_file']['name'][0]);
+    
+    echo '<pre>';
+    if (move_uploaded_file($_FILES['image_file']['tmp_name'][0], $uploadfile)) {
+        echo "File is valid, and was successfully uploaded.\n";
+    } else {
+        echo "Possible file upload attack!\n";
+        print_r($uploadfile);
+    }
+    
+    echo 'Here is some more debugging info:';
+    print_r($_FILES);
+    
+    print "</pre>";
+}*/
+    
